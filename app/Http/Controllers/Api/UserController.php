@@ -145,9 +145,7 @@ class UserController extends Controller
             'otp' => 'required|min:6'
         ]);
         $otp = $request->input('otp');
-
         $email = CookieHelper::getCookieByName('email');
-
         $isUser = User::where(['email' => $email, 'otp' => $otp])->first();
 
         if ($isUser) {

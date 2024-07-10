@@ -18,22 +18,8 @@ return new class extends Migration
             $table->string('slug', 255)->index();
             $table->string('short_des',500);
             $table->float('price',2);
-            $table->boolean('discount');
-            $table->float('discount_price',2);
+            $table->integer('product_quantity');
             $table->string('image',200);
-            $table->boolean('stock');
-            $table->integer('star');
-            $table->enum('remark',['popular','new','top','special','trending','regular']);
-
-            $table->unsignedBigInteger('category_id');
-            $table->unsignedBigInteger('brand_id');
-
-            $table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade')->onUpdate('cascade');
-                
-
-            $table->foreign('brand_id')->references('id')->on('brands')
-            ->onDelete('cascade')->onUpdate('cascade');
-
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
 

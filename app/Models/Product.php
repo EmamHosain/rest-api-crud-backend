@@ -17,15 +17,9 @@ class Product extends Model
         'title',
         'slug',
         'short_des',
+        'product_quantity',
         'price',
-        'discount',
-        'discount_price',
         'image',
-        'stock',
-        'star',
-        'remark',
-        'category_id',
-        'brand_id',
     ];
     public function getSlugOptions(): SlugOptions
     {
@@ -33,19 +27,4 @@ class Product extends Model
             ->generateSlugsFrom('title')
             ->saveSlugsTo('slug');
     }
-    public function category()
-    {
-        return $this->belongsTo(Category::class, 'category_id');
-    }
-
-    public function brand()
-    {
-        return $this->belongsTo(Brand::class, 'brand_id');
-    }
-
-    public function productDetail()
-    {
-        return $this->hasOne(ProductDetail::class);
-    }
-   
 }
