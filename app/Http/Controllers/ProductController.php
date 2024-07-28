@@ -2,39 +2,36 @@
 
 namespace App\Http\Controllers;
 
-use Response;
+use App\Http\Requests\UpdateProductRequest;
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
+use App\Http\Requests\ProductRequest;
 use Illuminate\Support\Facades\Storage;
+use Symfony\Component\HttpFoundation\Response;
 
 class ProductController extends Controller
 {
-    public function index(Request $request)
+    public function getProductsWithPaginate()
     {
-        $products = Product::orderByDesc('id')->paginate(10)->withQueryString();
-        return response()->json([
-            'data' => $products
-        ], 200);
+        return Product::orderByDesc('id')->paginate(10);
     }
 
-    public function store(Request $request)
+    public function index(Request $request): JsonResponse
     {
+        return response()->json([
+            'data' => $this->getProductsWithPaginate()
+        ], Response::HTTP_OK);
+    }
 
-        $request->validate([
-            'product_name' => 'required|string|max:200',
-            'short_description' => 'required|string|max:500',
-            'price' => 'required|numeric|min:0',
-            'product_quantity' => 'required|integer|min:0',
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif',
-        ]);
+    public function store(ProductRequest $request): JsonResponse
+    {
 
         if ($request->hasFile('image')) {
             $image = $request->file('image');
             $imageName = time() . '-' . uniqid() . '.' . $image->getClientOriginalExtension();
             $imagePath = $image->storeAs('products', $imageName, 'public');
         }
-
-        // Create the product
         Product::create([
             'title' => $request->product_name,
             'short_des' => $request->short_description,
@@ -42,7 +39,7 @@ class ProductController extends Controller
             'product_quantity' => $request->product_quantity,
             'image' => $imagePath
         ]);
-        return response()->json(['data' => Product::orderByDesc('id')->paginate(10)->withQueryString()], 201);
+        return response()->json(['data' => $this->getProductsWithPaginate()], Response::HTTP_CREATED);
     }
 
 
@@ -61,17 +58,9 @@ class ProductController extends Controller
 
 
 
-    public function update(Request $request, $id)
+    public function update(UpdateProductRequest $request, $id): JsonResponse
     {
         $product = Product::findOrFail($id);
-        $request->validate([
-            'product_name' => 'required|string|max:200',
-            'short_description' => 'required|string|max:500',
-            'price' => 'required|numeric|min:0',
-            'product_quantity' => 'required|integer|min:0',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif',
-        ]);
-
         if ($request->hasFile('image')) {
             // delete previous image from folder
             if ($product->image) {
@@ -84,7 +73,7 @@ class ProductController extends Controller
             $image = $request->file('image');
             $imageName = time() . '-' . uniqid() . '.' . $image->getClientOriginalExtension();
             $imagePath = $image->storeAs('products', $imageName, 'public');
-        }else{
+        } else {
             $imagePath = str_replace(Storage::disk('public')->url(''), '', $product->image);
         }
 
@@ -97,14 +86,14 @@ class ProductController extends Controller
         ]);
 
         return response()->json([
-            'data' => Product::orderByDesc('id')->paginate(10)->withQueryString()
-        ], 200);
+            'data' => $product
+        ], Response::HTTP_OK);
     }
 
 
 
 
-    public function destroy(Request $request, $id)
+    public function destroy(Request $request, $id): JsonResponse
     {
         $product = Product::findOrFail($id);
         if ($product->image) {
@@ -115,7 +104,7 @@ class ProductController extends Controller
         }
         $product->delete();
         return response()->json([
-            'data' => Product::orderByDesc('id')->paginate(10)->withQueryString()
-        ], 200);
+            'data' => $this->getProductsWithPaginate()
+        ], Response::HTTP_OK);
     }
 }
