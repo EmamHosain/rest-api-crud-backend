@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\UpdateProductRequest;
+use App\Http\Resources\ProductResource;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
@@ -12,9 +13,10 @@ use Symfony\Component\HttpFoundation\Response;
 
 class ProductController extends Controller
 {
-    public function getProductsWithPaginate()
+    public function getProductsWithPaginate(): array
     {
-        return Product::orderByDesc('id')->paginate(10);
+        $products = Product::with(['createdBy', 'updatedBy'])->orderByDesc('id')->paginate(10);
+        return ProductResource::collection($products)->response()->getData(true);
     }
 
     public function index(Request $request): JsonResponse
@@ -48,7 +50,7 @@ class ProductController extends Controller
     {
         $product = Product::findOrFail($id);
         return response()->json([
-            'data' => $product
+            'data' => ProductResource::make($product)
         ], 200);
     }
 
@@ -60,7 +62,7 @@ class ProductController extends Controller
 
     public function update(UpdateProductRequest $request, $id): JsonResponse
     {
-        $product = Product::findOrFail($id);
+        $product = Product::with(['createdBy', 'updatedBy'])->findOrFail($id);
         if ($request->hasFile('image')) {
             // delete previous image from folder
             if ($product->image) {
@@ -86,7 +88,7 @@ class ProductController extends Controller
         ]);
 
         return response()->json([
-            'data' => $product
+            'data' => ProductResource::make($product)
         ], Response::HTTP_OK);
     }
 
