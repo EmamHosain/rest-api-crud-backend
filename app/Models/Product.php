@@ -3,18 +3,17 @@
 namespace App\Models;
 
 use App\Observers\ProductObserver;
-use Illuminate\Database\Eloquent\Attributes\ObservedBy;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Spatie\Sluggable\HasSlug;
-use Spatie\Sluggable\SlugOptions;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 
 #[ObservedBy([ProductObserver::class])]
 class Product extends Model
 {
-    use HasFactory, HasSlug;
+    use HasFactory;
     protected $table = 'products';
 
     // The attributes that are mass assignable
@@ -29,17 +28,15 @@ class Product extends Model
         'updated_by',
         'created_by'
     ];
-    public function getSlugOptions(): SlugOptions
-    {
-        return SlugOptions::create()
-            ->generateSlugsFrom('title')
-            ->saveSlugsTo('slug');
-    }
-
 
     public function getImageAttribute($value)
     {
         return Storage::disk('public')->url($value);
+    }
+
+    public function geUpdatedByAttribute($value)
+    {
+        return User::where('id', 'updated_by')->first()->name;
     }
 
     public function user()

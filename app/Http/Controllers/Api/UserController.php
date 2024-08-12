@@ -166,8 +166,6 @@ class UserController extends Controller
                 'message' => 'Password reset successful.'
             ])->withCookie($cookie);
 
-
-
         } else {
             return response()->json([
                 'success' => false,

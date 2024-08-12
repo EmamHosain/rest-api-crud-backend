@@ -4,6 +4,7 @@ namespace App\Observers;
 
 use App\Models\User;
 use App\Models\Product;
+use Illuminate\Support\Str;
 
 class ProductObserver
 {
@@ -12,7 +13,7 @@ class ProductObserver
      */
     public function created(Product $product): void
     {
-       
+
     }
     /**
      * Handle the Product "creating" event.
@@ -21,7 +22,9 @@ class ProductObserver
     {
         $id = auth()->user()->id ?? User::first()->id;
         $product->created_by = $id;
-       
+        $product->user_id = $id;
+        $product->slug = Str::slug($product->title);
+
     }
 
     /**
@@ -33,7 +36,7 @@ class ProductObserver
     }
     public function updating(Product $product): void
     {
-        $id = auth()->user()->id ?? User::first()->id;
+        $id = auth()->user()->id;
         $product->updated_by = $id;
     }
     /**

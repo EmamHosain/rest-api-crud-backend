@@ -27,7 +27,7 @@ class DatabaseSeeder extends Seeder
             'password' => 'password',
         ]);
 
-        for ($i = 0; $i < 100; $i++) {
+        for ($i = 0; $i < 10; $i++) {
             Product::create([
                 'user_id' => $user->id,
                 // 'created_by' => $user->id,
