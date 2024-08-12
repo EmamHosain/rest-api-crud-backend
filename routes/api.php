@@ -1,38 +1,23 @@
 <?php
 
-use App\Http\Controllers\Api\UserController;
-use App\Http\Controllers\BrandController;
-use App\Http\Controllers\CategoryController;
-use App\Http\Controllers\ProductController;
-use Illuminate\Http\Request;
+
+use App\Http\Controllers\Api\Auth\PasswordController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\Api\UserController;
 
-
-
-
-// public route
-Route::post('/register', [UserController::class, 'register']);
-Route::post('/login', [UserController::class, 'login']);
-
-
-Route::put('/forget-password', [UserController::class, 'forgetPassword']);
-Route::post('/email-verify', [UserController::class, 'emailVerify']);
-Route::post('/reset-password', [UserController::class, 'resetPassword']);
 
 // protected route
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/users', [UserController::class, 'index']);
-    Route::post('/logout', [UserController::class, 'logout']);
-
-    // product route start here
     Route::get('/products', [ProductController::class, 'index']);
     Route::delete('/products/{id}', [ProductController::class, 'destroy']);
     Route::post('/products', [ProductController::class, 'store']);
     Route::put('/products/{id}', [ProductController::class, 'update']);
     Route::get('/products/{id}', [ProductController::class, 'show']);
+});
 
-
-
-
-
+Route::middleware('guest')->group(function () {
+    Route::post('/forgot-password', [PasswordController::class, 'forgotPassword']);
+    Route::post('/reset-password', [PasswordController::class, 'resetPassword']);
 });

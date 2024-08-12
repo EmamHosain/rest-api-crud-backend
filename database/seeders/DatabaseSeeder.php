@@ -27,18 +27,18 @@ class DatabaseSeeder extends Seeder
             'password' => 'password',
         ]);
 
-        for ($i = 0; $i < 10; $i++) {
-            Product::create([
-                'user_id' => $user->id,
-                // 'created_by' => $user->id,
-                // 'updated_by' => $user->id,
-                'title' => $faker->sentence,
-                'short_des' => $faker->paragraph,
-                'price' => $faker->randomFloat(2, 10, 100),
-                'image' => $faker->imageUrl(),
-                'product_quantity' => $faker->numberBetween(1, 200),
-            ]);
-        }
+        // for ($i = 0; $i < 10; $i++) {
+        //     Product::create([
+        //         'user_id' => $user->id,
+        //         // 'created_by' => $user->id,
+        //         // 'updated_by' => $user->id,
+        //         'title' => $faker->sentence,
+        //         'short_des' => $faker->paragraph,
+        //         'price' => $faker->randomFloat(2, 10, 100),
+        //         'image' => $faker->imageUrl(),
+        //         'product_quantity' => $faker->numberBetween(1, 200),
+        //     ]);
+        // }
 
 
     }
