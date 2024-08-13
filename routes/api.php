@@ -17,7 +17,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/products/{id}', [ProductController::class, 'show']);
 });
 
-Route::middleware('guest')->group(function () {
+Route::middleware('guest:api')->group(function () {
     Route::post('/forgot-password', [PasswordController::class, 'forgotPassword']);
     Route::post('/reset-password', [PasswordController::class, 'resetPassword']);
 });

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\Auth;
 
+use App\Jobs\PasswordResetJob;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Helper\TokenGenerator;
@@ -25,15 +26,23 @@ class PasswordController extends Controller
 
             if ($user) {
                 $token = TokenGenerator::generateToken(64);
-                // token save to database 
+                
+                // delete oldest token for this email
                 DB::table('password_reset_tokens')->where('email', $user->email)->delete();
+
+
+                // new token save to database for this email
                 $if_save_data_to_database = DB::table('password_reset_tokens')->insert([
                     'email' => $user->email,
                     'token' => $token
                 ]);
+
+
                 if ($if_save_data_to_database) {
                     $custom_link = env('FRONTEND_URL') . "/api/reset-password/{$token}?email={$user->email}";
-                    $user->notify(new PasswordResetNotification($custom_link));
+
+                    // dispatch password reset job
+                    PasswordResetJob::dispatch($user, $custom_link)->onQueue('high');
                 }
 
                 DB::commit();
