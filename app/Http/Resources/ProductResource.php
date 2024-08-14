@@ -24,7 +24,7 @@ class ProductResource extends JsonResource
             'image' => $this->image,
             'created_by' => $this->createdBy ? $this->createdBy->name : null,
             'updated_by' => $this->updatedBy ? $this->updatedBy->name : null,
-            // 'updated_by' => $this->updatedBy ? $this->updatedBy->name : null,
+           
         ];
     }
 }

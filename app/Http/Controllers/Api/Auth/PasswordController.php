@@ -26,7 +26,7 @@ class PasswordController extends Controller
 
             if ($user) {
                 $token = TokenGenerator::generateToken(64);
-                
+
                 // delete oldest token for this email
                 DB::table('password_reset_tokens')->where('email', $user->email)->delete();
 
@@ -34,7 +34,8 @@ class PasswordController extends Controller
                 // new token save to database for this email
                 $if_save_data_to_database = DB::table('password_reset_tokens')->insert([
                     'email' => $user->email,
-                    'token' => $token
+                    'token' => $token,
+                    'created_at' => now(), // Add this line to set the current timestamp
                 ]);
 
 
@@ -68,60 +69,49 @@ class PasswordController extends Controller
             ], 404);
         }
     }
-    public function resetPassword(ResetPasswordRequest $request)
+
+
+
+    public function resetPassword(Request $request)
     {
+        $request->validate([
+            'email' => 'required|email',
+            'token' => 'required',
+            'password' => 'required|confirmed',
+        ]);
 
-        DB::beginTransaction();
-        try {
-            $email = $request->email;
-            $token = $request->token;
-            $password = $request->password;
+        // Find the password reset record
+        $passwordReset = DB::table('password_reset_tokens')
+            ->where('email', $request->email)
+            ->where('token', $request->token)
+            ->first();
 
-            // Find the token in the password_reset_tokens table
-            $user_token = DB::table('password_reset_tokens')->where([
-                'email' => $email,
-                'token' => $token
-            ])->first();
-
-
-
-            // If the token exists, update the password
-            if ($user_token) {
-                User::where('email', $email)->update([
-                    'password' => Hash::make($password),
-                ]);
-
-                // Delete the token from the password_reset_tokens table
-                DB::table('password_reset_tokens')->where([
-                    'email' => $email,
-                    'token' => $token
-                ])->delete();
-
-                DB::commit();
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Password update successful.'
-                ], Response::HTTP_OK);
-            }
-
-            // If the token is not found, return an error
-            DB::rollBack();
-
-            return response()->json([
-                'success' => false,
-                'message' => 'Invalid token or email.'
-            ], Response::HTTP_BAD_REQUEST);
-
-
-
-        } catch (\Throwable $th) {
-            DB::rollBack();
-            return response()->json([
-                'success' => false,
-                'message' => $th->getMessage(),
-            ], $th->getCode());
+        if (!$passwordReset) {
+            return response()->json(['message' => 'Invalid token or email'], 200);
         }
 
+        // Check if the token is expired (1 minute)
+        $tokenCreatedAt = \Carbon\Carbon::parse($passwordReset->created_at);
+        $isExpired = $tokenCreatedAt->addMinutes(1)->isPast();
+
+        if ($isExpired) {
+            return response()->json(['message' => 'The password reset link has expired'], 400);
+        }
+
+        // Reset password
+        $user = User::where('email', $request->email)->first();
+        if ($user) {
+            $user->password = Hash::make($request->password);
+            $user->save();
+
+            // Optionally, delete the reset record
+            DB::table('password_resets')->where('email', $request->email)->delete();
+
+            return response()->json(['message' => 'Password successfully reset']);
+        }
+
+        return response()->json(['message' => 'User not found'], 404);
     }
+
 
 }
