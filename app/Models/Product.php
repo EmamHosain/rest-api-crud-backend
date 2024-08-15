@@ -34,11 +34,6 @@ class Product extends Model
         return Storage::disk('public')->url($value);
     }
 
-    public function geUpdatedByAttribute($value)
-    {
-        return User::where('id', 'updated_by')->first()->name;
-    }
-
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');

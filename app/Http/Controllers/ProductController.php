@@ -15,7 +15,7 @@ class ProductController extends Controller
 {
     public function getProductsWithPaginate(): array
     {
-        $products = Product::with(['createdBy'])->orderByDesc('id')->paginate(10);
+        $products = Product::with(['createdBy','updatedBy'])->orderByDesc('id')->paginate(10);
         return ProductResource::collection($products)->response()->getData(true);
     }
 
@@ -88,7 +88,7 @@ class ProductController extends Controller
         ]);
 
         return response()->json([
-            'data' => ProductResource::make($product)
+            'data' => ProductResource::make(Product::find($id))
         ], Response::HTTP_OK);
     }
 

@@ -21,3 +21,4 @@ Route::middleware('guest:api')->group(function () {
     Route::post('/forgot-password', [PasswordController::class, 'forgotPassword']);
     Route::post('/reset-password', [PasswordController::class, 'resetPassword']);
 });
+
