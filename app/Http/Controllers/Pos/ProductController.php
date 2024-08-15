@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Pos;
 
 use App\Http\Requests\UpdateProductRequest;
 use App\Http\Resources\ProductResource;
@@ -15,7 +15,7 @@ class ProductController extends Controller
 {
     public function getProductsWithPaginate(): array
     {
-        $products = Product::with(['createdBy','updatedBy'])->orderByDesc('id')->paginate(10);
+        $products = Product::with(['createdBy', 'updatedBy'])->orderByDesc('id')->paginate(10);
         return ProductResource::collection($products)->response()->getData(true);
     }
 
@@ -62,7 +62,7 @@ class ProductController extends Controller
 
     public function update(UpdateProductRequest $request, $id): JsonResponse
     {
-        $product = Product::with(['createdBy','updatedBy'])->findOrFail($id);
+        $product = Product::with(['createdBy', 'updatedBy'])->findOrFail($id);
         if ($request->hasFile('image')) {
             // delete previous image from folder
             if ($product->image) {

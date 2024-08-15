@@ -3,7 +3,7 @@
 
 use App\Http\Controllers\Api\Auth\PasswordController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\ProductController;
+use App\Http\Controllers\Pos\ProductController;
 use App\Http\Controllers\Api\UserController;
 
 
@@ -21,4 +21,3 @@ Route::middleware('guest:api')->group(function () {
     Route::post('/forgot-password', [PasswordController::class, 'forgotPassword']);
     Route::post('/reset-password', [PasswordController::class, 'resetPassword']);
 });
-

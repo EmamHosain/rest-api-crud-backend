@@ -18,15 +18,15 @@ class Product extends Model
 
     // The attributes that are mass assignable
     protected $fillable = [
-        'user_id',
-        'title',
+        'product_name',
         'slug',
-        'short_des',
+        'description',
         'product_quantity',
         'price',
         'image',
-        'updated_by',
-        'created_by'
+        'brand',
+        'quantity',
+        'alert_stock',
     ];
 
     public function getImageAttribute($value)
