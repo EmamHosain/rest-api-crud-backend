@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\Pos;
-
+use App\Http\Controllers\Controller;
 use App\Http\Requests\UpdateProductRequest;
 use App\Http\Resources\ProductResource;
 use App\Models\Product;
