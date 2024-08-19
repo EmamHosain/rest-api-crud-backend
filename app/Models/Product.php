@@ -18,10 +18,13 @@ class Product extends Model
 
     // The attributes that are mass assignable
     protected $fillable = [
+        'user_id',
+        'created_by',
+        'updated_by',
+
         'product_name',
         'slug',
         'description',
-        'product_quantity',
         'price',
         'image',
         'brand',

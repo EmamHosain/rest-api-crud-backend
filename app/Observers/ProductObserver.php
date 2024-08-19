@@ -20,10 +20,8 @@ class ProductObserver
      */
     public function creating(Product $product): void
     {
-        $id = auth()->user()->id ?? User::first()->id;
-        $product->created_by = $id;
-        $product->user_id = $id;
-        $product->slug = Str::slug($product->title);
+    
+        $product->slug = Str::slug($product->product_name);
 
     }
 
@@ -36,8 +34,7 @@ class ProductObserver
     }
     public function updating(Product $product): void
     {
-        $id = auth()->user()->id;
-        $product->updated_by = $id;
+       
     }
     /**
      * Handle the Product "deleted" event.

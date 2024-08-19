@@ -13,7 +13,7 @@ return new class extends Migration {
         Schema::create('products', function (Blueprint $table) {
 
             $table->id();
-            // $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('user_id');
             $table->string('product_name', 255);
             $table->string('slug', 255)->index();
             $table->text('description');
@@ -22,15 +22,15 @@ return new class extends Migration {
             $table->decimal('price', 8, 2); // Use decimal for currency values
             $table->integer('quantity');
             $table->integer('alert_stock')->default(100);
-            $table->string('image', 255);
+            $table->text('image');
 
-            // $table->unsignedBigInteger('created_by')->nullable();
-            // $table->unsignedBigInteger('updated_by')->nullable();
+            $table->unsignedBigInteger('created_by')->nullable();
+            $table->unsignedBigInteger('updated_by')->nullable();
 
-            // $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
             
-            // $table->foreign('created_by')->references('id')->on('users')->onDelete('set null');
-            // $table->foreign('updated_by')->references('id')->on('users')->onDelete('set null');
+            $table->foreign('created_by')->references('id')->on('users')->onDelete('set null');
+            $table->foreign('updated_by')->references('id')->on('users')->onDelete('set null');
 
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();

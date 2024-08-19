@@ -22,11 +22,18 @@ class ProductRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'user_id' => ['required', 'integer', 'exists:users,id'],
+            'created_by' => ['required', 'integer', 'exists:users,id'],
+            'updated_by' => ['nullable', 'integer', 'exists:users,id'],
+
+
             'product_name' => ['required', 'string', 'max:255'],
-            'short_description' => ['required', 'string', 'max:500'],
+            'brand' => ['required', 'string', 'max:255'],
+            'description' => ['required', 'string'],
             'price' => ['required', 'numeric', 'min:0'],
-            'product_quantity' => ['required', 'integer', 'min:0'],
+            'quantity' => ['required', 'integer', 'min:0'],
             'image' => ['required', 'image', 'mimes:png,jpg,jpeg'],
+            'alert_stock' => ['required', 'integer', 'min:0'],
 
         ];
     }
@@ -35,26 +42,40 @@ class ProductRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'product_name.required' => 'Product name should be required',
-            'product_name.string' => 'Product name should be string',
-            'product_name.max' => 'Product name maximum 255 character',
+            'user_id.required' => 'User ID is required.',
+            'user_id.integer' => 'User ID must be an integer.',
 
-            'short_description.required' => 'Description  should be required',
-            'short_description.string' => 'Description  must be string',
-            'short_description.max' => 'Description  should be 500 characters',
+            'created_by.integer' => 'Created by must be an integer.',
 
-            'price.required' => 'Price  should be required',
-            'price.numeric' => 'Price  should be numeric',
-            'price.min' => 'Price  should be minimum length 0',
+            'updated_by.integer' => 'Updated by must be an integer.',
 
-            'product_quantity.required' => 'Quantity should be required',
-            'product_quantity.integer' => 'Quantity should be type integer',
-            'product_quantity.min' => 'Quantity should be minimum length 0',
+            'product_name.required' => 'Product name is required.',
+            'product_name.string' => 'Product name must be a string.',
+            'product_name.max' => 'Product name should not exceed 255 characters.',
 
-            'image.required' => 'Image should be required',
-            'image.image' => 'Image should be image',
-            'image.mimes' => 'Image should be type png, jpg, and jpeg',
+            'brand.required' => 'Brand is required.',
+            'brand.string' => 'Brand must be a string.',
+            'brand.max' => 'Brand should not exceed 255 characters.',
 
+            'description.required' => 'Description is required.',
+            'description.string' => 'Description must be a string.',
+
+            'price.required' => 'Price is required.',
+            'price.numeric' => 'Price must be a number.',
+            'price.min' => 'Price should not be less than 0.',
+
+            'quantity.required' => 'Quantity is required.',
+            'quantity.integer' => 'Quantity must be an integer.',
+            'quantity.min' => 'Quantity should not be less than 0.',
+
+            'image.required' => 'Image is required.',
+            'image.image' => 'File uploaded should be an image.',
+            'image.mimes' => 'Image should be in the format: png, jpg, jpeg.',
+
+            'alert_stock.required' => 'Alert stock is required.',
+            'alert_stock.integer' => 'Alert stock must be an integer.',
+            'alert_stock.min' => 'Alert stock should not be less than 0.',
         ];
     }
+
 }
